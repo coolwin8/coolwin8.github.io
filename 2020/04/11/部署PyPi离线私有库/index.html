@@ -20,21 +20,23 @@
     <meta name="keywords" content="hexo,blog,technology">
     
     <meta name="description" content="coolwin8的日常技术笔记">
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+    <meta name="description" content="1. 拉取镜像 pypiserver&#x2F;pypiserver1docker pull pypiserver&#x2F;pypiserver:latest 2. docker 部署运行 运行container1234567891011mkdir -p &#x2F;data&#x2F;pypi&#x2F;packages# 无认证目录上传，直接将安装包下载到映射目录即可docker  run --nam">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://coolwin8.github.io/2020/03/26/hello-world/index.html">
+<meta property="og:title" content="部署PyPi离线私有库">
+<meta property="og:url" content="http://coolwin8.github.io/2020/04/11/%E9%83%A8%E7%BD%B2PyPi%E7%A6%BB%E7%BA%BF%E7%A7%81%E6%9C%89%E5%BA%93/index.html">
 <meta property="og:site_name" content="CoolWin8的技术博客">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="1. 拉取镜像 pypiserver&#x2F;pypiserver1docker pull pypiserver&#x2F;pypiserver:latest 2. docker 部署运行 运行container1234567891011mkdir -p &#x2F;data&#x2F;pypi&#x2F;packages# 无认证目录上传，直接将安装包下载到映射目录即可docker  run --nam">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-03-26T06:30:10.543Z">
-<meta property="article:modified_time" content="2020-03-24T07:50:27.304Z">
+<meta property="article:published_time" content="2020-04-11T02:58:52.450Z">
+<meta property="article:modified_time" content="2020-04-11T05:39:24.752Z">
 <meta property="article:author" content="lengwei">
+<meta property="article:tag" content="pypi">
+<meta property="article:tag" content="部署">
 <meta name="twitter:card" content="summary">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     
-    <title>Hello World · wayne&#39;s blog</title>
+    <title>部署PyPi离线私有库 · wayne&#39;s blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -229,7 +231,7 @@
                 <a href="/" >Wayne.Leng 的技术博客.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">Hello World</a>
+                <a href="#" class="post-name">部署PyPi离线私有库</a>
             </div>
     </div>
     
@@ -259,7 +261,7 @@ height:30vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Hello World
+            部署PyPi离线私有库
             <!-- 404 -->
             
         </h1>
@@ -276,14 +278,22 @@ height:30vh;
             <div class="post-intros">
                 <!-- 文章页标签  -->
                 
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "pypi">pypi</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "部署">部署</a>
+    
+</div>
+                
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">73</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">739</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2020/03/26</span>
+                    <span class="post-intro-time">2020/04/11</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -407,28 +417,53 @@ height:30vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+        <h3 id="1-拉取镜像"><a href="#1-拉取镜像" class="headerlink" title="1. 拉取镜像"></a>1. 拉取镜像</h3><ul>
+<li>pypiserver/pypiserver<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull pypiserver&#x2F;pypiserver:latest</span><br></pre></td></tr></table></figure>
+<h3 id="2-docker-部署运行"><a href="#2-docker-部署运行" class="headerlink" title="2. docker 部署运行"></a>2. docker 部署运行</h3></li>
+<li>运行container<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p &#x2F;data&#x2F;pypi&#x2F;packages</span><br><span class="line"># 无认证目录上传，直接将安装包下载到映射目录即可</span><br><span class="line">docker  run --name pypiserver --restart&#x3D;always -d -p 8088:8080 -v &#x2F;data&#x2F;pypi&#x2F;packages:&#x2F;data&#x2F;packages pypiserver&#x2F;pypiserver:latest</span><br><span class="line"></span><br><span class="line"># apache认证pypiupload 上传</span><br><span class="line">htpasswd -sc &#x2F;data&#x2F;pypi&#x2F;auth&#x2F;.htpasswd lengwei</span><br><span class="line">ln -sv &#x2F;usr&#x2F;local&#x2F;sbin&#x2F;python3.7&#x2F;bin&#x2F;pypiupload &#x2F;us&#x2F;bin&#x2F;pypiupload</span><br><span class="line">docker  run --name pypiserver -d  -p 8088:8080 -v &#x2F;data&#x2F;pypi&#x2F;auth&#x2F;.htpasswd:&#x2F;data&#x2F;.htpasswd pypiserver&#x2F;pypiserver:latest -P .htpasswd packages</span><br><span class="line"></span><br><span class="line"># 合成</span><br><span class="line">docker  run --name pypiserver --restart&#x3D;always -d  -p 8088:8080 -v &#x2F;data&#x2F;pypi&#x2F;auth&#x2F;.htpasswd:&#x2F;data&#x2F;.htpasswd -v &#x2F;data&#x2F;pypi&#x2F;packages&#x2F;:&#x2F;data&#x2F;packages&#x2F;  pypiserver&#x2F;pypiserver:latest -P .htpasswd packages</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="3-客户端配置"><a href="#3-客户端配置" class="headerlink" title="3. 客户端配置"></a>3. 客户端配置</h3><ul>
+<li><p>配置pypi</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost pypi]# vi ~&#x2F;.pypirc </span><br><span class="line">[distutils]</span><br><span class="line">index-servers &#x3D;</span><br><span class="line">      local</span><br><span class="line"></span><br><span class="line">[local]</span><br><span class="line">repository: http:&#x2F;&#x2F;192.168.1.14:8088</span><br><span class="line">username: lengwei</span><br><span class="line">password: 123456</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装上传工具 pypi-upload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost]# pip install pypi-upload</span><br><span class="line">pypiupload files &#x2F;data&#x2F;pypi&#x2F;packages&#x2F;*  -i local</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置pip</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost pypi]# vi ~&#x2F;.pip&#x2F;pip.conf</span><br><span class="line">[global]</span><br><span class="line">index-url &#x3D; http:&#x2F;&#x2F;192.168.1.14&#x2F;simple</span><br><span class="line">extra-index-url&#x3D;https:&#x2F;&#x2F;pypi.mirrors.ustc.edu.cn&#x2F;simple</span><br><span class="line"># aliyun pypi镜像 https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;pypi&#x2F;simple&#x2F;</span><br><span class="line"></span><br><span class="line">[install]</span><br><span class="line">trusted-host &#x3D; 192.168.1.14</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="4-拉取依赖包到私有库-在不同的平台下执行拉取，如win-amd64、manylinux等"><a href="#4-拉取依赖包到私有库-在不同的平台下执行拉取，如win-amd64、manylinux等" class="headerlink" title="4. 拉取依赖包到私有库 (在不同的平台下执行拉取，如win_amd64、manylinux等)"></a>4. 拉取依赖包到私有库 (在不同的平台下执行拉取，如win_amd64、manylinux等)</h3><ul>
+<li><p>Python 项目使用 pip 安装的包，都可以通过 pip freeze &gt;requirements.txt 导出环境中已有的模块。搭建 requirements.txt 离线 PyPI 仓库，我们首先需要把 requirements.txt 所有的模块安装包下载到本地。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ pip download -d &#x2F;data&#x2F;pypi&#x2F;packages -r requirements.txt --index-url https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;pypi&#x2F;simple --extra-index-url https:&#x2F;&#x2F;wheels.galaxyproject.org&#x2F;simple</span><br><span class="line">Looking in indexes: https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;pypi&#x2F;simple, https:&#x2F;&#x2F;wheels.galaxyproject.org&#x2F;simple</span><br><span class="line">Collecting amqp&#x3D;&#x3D;2.2.2 (from -r &#x2F;&#x2F;home&#x2F;shenweiyan&#x2F;galaxy&#x2F;requirements.txt (line 1))</span><br><span class="line">Downloading https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;pypi&#x2F;packages&#x2F;88&#x2F;4a&#x2F;8c45a882d842678963516ebd9cf584a4ded51af719234c3b696c2e884c60&#x2F;amqp-2.2.2-py2.py3-none-any.whl (48kB)</span><br><span class="line">  100% |████████████████████████████████| 51kB 779kB&#x2F;s</span><br><span class="line">Saved .&#x2F;amqp-2.2.2-py2.py3-none-any.whl</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">Collecting wrapt&#x3D;&#x3D;1.10.11 (from -r &#x2F;home&#x2F;shenweiyan&#x2F;galaxy&#x2F;requirements.txt (line 134))</span><br><span class="line">Downloading https:&#x2F;&#x2F;wheels.galaxyproject.org&#x2F;packages&#x2F;wrapt-1.10.11-cp27-cp27mu-manylinux1_x86_64.whl (64kB)</span><br><span class="line">  100% |████████████████████████████████| 71kB 321kB&#x2F;s</span><br><span class="line">Saved &#x2F;home&#x2F;galaxy&#x2F;packages&#x2F;wrapt-1.10.11-cp27-cp27mu-manylinux1_x86_64.whl</span><br><span class="line">Successfully downloaded amqp appdirs asn1crypto babel bagit bcrypt bdbag beaker bioblend bleach boltons boto bunch bx-python bz2file certifi ...... wcwidth webencodings webob whoosh wrapt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把 /home/shenweiyan/packages 整个目录拷贝到目标服务器(可连网但速度极慢，目标路径：/data/galaxy-dist/packages)，搭建并启动 pypiserver，然后从本地离线 PyPI 仓库安装 requirements 软件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pip install --index-url http:&#x2F;&#x2F;localhost:8080&#x2F;simple&#x2F; --extra-index-url https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;pypi&#x2F;simple&#x2F; -r requirements.txt</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="5-获取现有依赖库"><a href="#5-获取现有依赖库" class="headerlink" title="5. 获取现有依赖库"></a>5. 获取现有依赖库</h3><ul>
+<li><p>pip导出安装的库到requirements.txt</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pip导入requirements.txt中列出的库到系统</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install -r requirements.txt</span><br><span class="line">pip download -d &#x2F;data&#x2F;pypi&#x2F;packages -r requirements.txt</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+<p>pip download <br>–only-binary=:all: <br>–platform linux_x86_64 <br>–python-version 3 <br>–implementation cp <br>–abi cp37m \</p>
+</li>
+</ul>
 
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://coolwin8.github.io">lengwei</a>
-            <p>原文链接：<a href="http://coolwin8.github.io/2020/03/26/hello-world/">http://coolwin8.github.io/2020/03/26/hello-world/</a>
-            <p>发表日期：<a href="http://coolwin8.github.io/2020/03/26/hello-world/">March 26th 2020, 2:30:10 pm</a>
-            <p>更新日期：<a href="http://coolwin8.github.io/2020/03/26/hello-world/">March 24th 2020, 3:50:27 pm</a>
+            <p>原文链接：<a href="http://coolwin8.github.io/2020/04/11/%E9%83%A8%E7%BD%B2PyPi%E7%A6%BB%E7%BA%BF%E7%A7%81%E6%9C%89%E5%BA%93/">http://coolwin8.github.io/2020/04/11/%E9%83%A8%E7%BD%B2PyPi%E7%A6%BB%E7%BA%BF%E7%A7%81%E6%9C%89%E5%BA%93/</a>
+            <p>发表日期：<a href="http://coolwin8.github.io/2020/04/11/%E9%83%A8%E7%BD%B2PyPi%E7%A6%BB%E7%BA%BF%E7%A7%81%E6%9C%89%E5%BA%93/">April 11th 2020, 10:58:52 am</a>
+            <p>更新日期：<a href="http://coolwin8.github.io/2020/04/11/%E9%83%A8%E7%BD%B2PyPi%E7%A6%BB%E7%BA%BF%E7%A7%81%E6%9C%89%E5%BA%93/">April 11th 2020, 1:39:24 pm</a>
             <p>版权声明：本文采用<a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -436,13 +471,13 @@ height:30vh;
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href= "/2020/04/11/%E9%83%A8%E7%BD%B2PyPi%E7%A6%BB%E7%BA%BF%E7%A7%81%E6%9C%89%E5%BA%93/" title= "部署PyPi离线私有库">
-                    <div class="nextTitle">部署PyPi离线私有库</div>
-                </a>
-            
         </li>
         <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2020/03/26/hello-world/" title= "Hello World">
+                    <div class="prevTitle">Hello World</div>
+                </a>
             
         </li>
     </ul>
@@ -564,7 +599,7 @@ top:30vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-number">1.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-number">1.1.</span> <span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-number">1.2.</span> <span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-number">1.3.</span> <span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-number">1.4.</span> <span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-拉取镜像"><span class="toc-number">1.</span> <span class="toc-text">1. 拉取镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-docker-部署运行"><span class="toc-number">2.</span> <span class="toc-text">2. docker 部署运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-客户端配置"><span class="toc-number">3.</span> <span class="toc-text">3. 客户端配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-拉取依赖包到私有库-在不同的平台下执行拉取，如win-amd64、manylinux等"><span class="toc-number">4.</span> <span class="toc-text">4. 拉取依赖包到私有库 (在不同的平台下执行拉取，如win_amd64、manylinux等)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-获取现有依赖库"><span class="toc-number">5.</span> <span class="toc-text">5. 获取现有依赖库</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
