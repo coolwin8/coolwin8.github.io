@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="lengwei">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="lengwei">
+    
+    <meta name="keywords" content="hexo,blog,technology">
+    
+    <meta name="description" content="coolwin8的日常技术笔记">
+    <meta name="description" content="看到一篇好文章分享出来，看别人是如何选特征的，作者是Edwin Jarvis 作者：Edwin Jarvis 特征选择(排序)对于数据科学家、机器学习从业者来说非常重要。好的特征选择能够提升模型的性能，更能帮助我们理解数据的特点、底层结构，这对进一步改善模型、算法都有着重要作用。 特征选择主要有两个功能：  减少特征数量、降维，使模型泛化能力更强，减少过拟合 增强对特征和特征值之间的理解  拿到数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习如何选择特征">
+<meta property="og:url" content="http://coolwin8.github.io/2020/04/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E7%89%B9%E5%BE%81/index.html">
+<meta property="og:site_name" content="CoolWin8的技术博客">
+<meta property="og:description" content="看到一篇好文章分享出来，看别人是如何选特征的，作者是Edwin Jarvis 作者：Edwin Jarvis 特征选择(排序)对于数据科学家、机器学习从业者来说非常重要。好的特征选择能够提升模型的性能，更能帮助我们理解数据的特点、底层结构，这对进一步改善模型、算法都有着重要作用。 特征选择主要有两个功能：  减少特征数量、降维，使模型泛化能力更强，减少过拟合 增强对特征和特征值之间的理解  拿到数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://coolwin8.github.io/Users/lengwei/SeaDrive/%E6%88%91%E7%9A%84%E8%B5%84%E6%96%99%E5%BA%93/%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0/media/v2-dda27e3c18bf85cf169de8a31cb9c3ea_hd.jpg">
+<meta property="og:image" content="http://coolwin8.github.io/Users/lengwei/SeaDrive/%E6%88%91%E7%9A%84%E8%B5%84%E6%96%99%E5%BA%93/%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0/media/v2-7b4feb144b9845670d64c5150754aad9_hd.jpg">
+<meta property="article:published_time" content="2020-04-11T06:11:56.583Z">
+<meta property="article:modified_time" content="2020-04-11T06:23:54.817Z">
+<meta property="article:author" content="lengwei">
+<meta property="article:tag" content="特征选择">
+<meta property="article:tag" content="网文精选">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://coolwin8.github.io/Users/lengwei/SeaDrive/%E6%88%91%E7%9A%84%E8%B5%84%E6%96%99%E5%BA%93/%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0/media/v2-dda27e3c18bf85cf169de8a31cb9c3ea_hd.jpg">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    
+    <title>机器学习如何选择特征 · wayne&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Wayne.Leng 的技术博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">机器学习如何选择特征</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Wayne.Leng 的技术博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:30vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            机器学习如何选择特征
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "特征选择">特征选择</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "网文精选">网文精选</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">9.3k</span>阅读时长: <span class="post-count reading-time">37 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/04/11</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id=""><a href="#" class="headerlink" title=""></a></h1><p>看到一篇好文章分享出来，看别人是如何选特征的，作者是<a href="https://link.zhihu.com/?target=http%3A//www.chaoslog.com/author/edwin-jarvis.html">Edwin Jarvis</a></p>
+<p>作者：<a href="https://link.zhihu.com/?target=http%3A//www.chaoslog.com/author/edwin-jarvis.html">Edwin Jarvis</a></p>
+<p>特征选择(排序)对于数据科学家、机器学习从业者来说非常重要。好的特征选择能够提升模型的性能，更能帮助我们理解数据的特点、底层结构，这对进一步改善模型、算法都有着重要作用。</p>
+<p>特征选择主要有两个功能：</p>
+<ol>
+<li>减少特征数量、降维，使模型泛化能力更强，减少过拟合</li>
+<li>增强对特征和特征值之间的理解</li>
+</ol>
+<p>拿到数据集，一个特征选择方法，往往很难同时完成这两个目的。通常情况下，我们经常不管三七二十一，选择一种自己最熟悉或者最方便的特征选择方法（往往目的是降维，而忽略了对特征和数据理解的目的）。</p>
+<p>在许多机器学习相关的书里，很难找到关于特征选择的内容，因为特征选择要解决的问题往往被视为机器学习的一种副作用，一般不会单独拿出来讨论。</p>
+<p>本文将结合<a href="https://link.zhihu.com/?target=http%3A//scikit-learn.org/stable/modules/feature_selection.html%23univariate-feature-selection">Scikit-learn提供的例子</a>介绍几种常用的特征选择方法，它们各自的优缺点和问题。</p>
+<h2 id="1-去掉取值变化小的特征-Removing-features-with-low-variance"><a href="#1-去掉取值变化小的特征-Removing-features-with-low-variance" class="headerlink" title="1 去掉取值变化小的特征 Removing features with low variance"></a><strong>1 去掉取值变化小的特征 Removing features with low variance</strong></h2><p>这应该是最简单的特征选择方法了：假设某特征的特征值只有0和1，并且在所有输入样本中，95%的实例的该特征取值都是1，那就可以认为这个特征作用不大。如果100%都是1，那这个特征就没意义了。当特征值都是离散型变量的时候这种方法才能用，如果是连续型变量，就需要将连续变量离散化之后才能用，而且实际当中，一般不太会有95%以上都取某个值的特征存在，所以这种方法虽然简单但是不太好用。可以把它作为特征选择的预处理，先去掉那些取值变化小的特征，然后再从接下来提到的的特征选择方法中选择合适的进行进一步的特征选择。</p>
+<h2 id="2-单变量特征选择-Univariate-feature-selection"><a href="#2-单变量特征选择-Univariate-feature-selection" class="headerlink" title="2 单变量特征选择 Univariate feature selection"></a><strong>2 单变量特征选择 Univariate feature selection</strong></h2><p>单变量特征选择能够对每一个特征进行测试，衡量该特征和响应变量之间的关系，根据得分扔掉不好的特征。对于回归和分类问题可以采用卡方检验等方式对特征进行测试。</p>
+<p>这种方法比较简单，易于运行，易于理解，通常对于理解数据有较好的效果（但对特征优化、提高泛化能力来说不一定有效）；这种方法有许多改进的版本、变种。</p>
+<h2 id="2-1-Pearson相关系数-Pearson-Correlation"><a href="#2-1-Pearson相关系数-Pearson-Correlation" class="headerlink" title="2.1 Pearson相关系数 Pearson Correlation"></a><strong>2.1 Pearson相关系数 Pearson Correlation</strong></h2><p>皮尔森相关系数是一种最简单的，能帮助理解特征和响应变量之间关系的方法，该方法衡量的是变量之间的==线性相关性==，结果的取值区间为[-1，1]，-1表示完全的负相关(这个变量下降，那个就会上升)，+1表示完全的正相关，0表示没有线性相关。</p>
+<p>Pearson Correlation速度快、易于计算，经常在拿到数据(经过清洗和特征提取之后的)之后第一时间就执行。Scipy的<a href="https://link.zhihu.com/?target=http%3A//docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.pearsonr.html">pearsonr</a>方法能够同时计算相关系数和p-value，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">from scipy.stats import pearsonr</span><br><span class="line"></span><br><span class="line">np.random.seed(0)</span><br><span class="line">size &#x3D; 300</span><br><span class="line">x &#x3D; np.random.normal(0, 1, size)</span><br><span class="line">print &quot;Lower noise&quot;, pearsonr(x, x + np.random.normal(0, 1, size))</span><br><span class="line">print &quot;Higher noise&quot;, pearsonr(x, x + np.random.normal(0, 10, size))</span><br></pre></td></tr></table></figure>
+
+<p>Lower noise (0.71824836862138386, 7.3240173129992273e-49)<br>Higher noise (0.057964292079338148, 0.31700993885324746)</p>
+<p>这个例子中，我们比较了变量在加入噪音之前和之后的差异。当噪音比较小的时候，相关性很强，p-value很低。</p>
+<p>Scikit-learn提供的<a href="https://link.zhihu.com/?target=http%3A//scikit-learn.org/stable/modules/generated/sklearn.feature_selection.f_regression.html">f_regrssion</a>方法能够批量计算特征的p-value，非常方便，参考sklearn的<a href="https://link.zhihu.com/?target=http%3A//scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">pipeline</a></p>
+<p>Pearson相关系数的一个明显缺陷是，作为特征排序机制，他只对线性关系敏感。如果关系是非线性的，即便两个变量具有一一对应的关系，Pearson相关性也可能会接近0。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x &#x3D; np.random.uniform(-1, 1, 100000)</span><br><span class="line">print pearsonr(x, x**2)[0]</span><br></pre></td></tr></table></figure>
+
+<p>-0.00230804707612</p>
+<p>更多类似的例子参考<a href="https://link.zhihu.com/?target=http%3A//upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Correlation_examples2.svg/506px-Correlation_examples2.svg.png">sample plots</a>。另外，如果仅仅根据相关系数这个值来判断的话，有时候会具有很强的误导性，如<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Anscombe%27s_quartet">Anscombe’s quartet</a>，最好把数据可视化出来，以免得出错误的结论。</p>
+<h2 id="2-2-互信息和最大信息系数-Mutual-information-and-maximal-information-coefficient-MIC"><a href="#2-2-互信息和最大信息系数-Mutual-information-and-maximal-information-coefficient-MIC" class="headerlink" title="2.2 互信息和最大信息系数 Mutual information and maximal information coefficient (MIC)"></a><strong>2.2 互信息和最大信息系数 Mutual information and maximal information coefficient (MIC)</strong></h2><p>以上就是经典的互信息公式了。想把互信息直接用于特征选择其实不是太方便：1、它不属于度量方式，也没有办法归一化，在不同数据及上的结果无法做比较；2、对于连续变量的计算不是很方便（X和Y都是集合，x，y都是离散的取值），通常变量需要先离散化，而互信息的结果对离散化的方式很敏感。</p>
+<p>最大信息系数克服了这两个问题。它首先寻找一种最优的离散化方式，然后把互信息取值转换成一种度量方式，取值区间在[0，1]。<a href="https://link.zhihu.com/?target=http%3A//minepy.sourceforge.net/">minepy</a>提供了MIC功能。</p>
+<p>反过头来看y=x^2这个例子，MIC算出来的互信息值为1(最大的取值)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">from minepy import MINE</span><br><span class="line"></span><br><span class="line">m &#x3D; MINE()</span><br><span class="line">x &#x3D; np.random.uniform(-1, 1, 10000)</span><br><span class="line">m.compute_score(x, x**2)</span><br><span class="line">print m.mic()</span><br></pre></td></tr></table></figure>
+
+<p>1.0</p>
+<p>MIC的统计能力遭到了<a href="https://link.zhihu.com/?target=http%3A//statweb.stanford.edu/~tibs/reshef/comment.pdf">一些质疑</a>，当零假设不成立时，MIC的统计就会受到影响。在有的数据集上不存在这个问题，但有的数据集上就存在这个问题。</p>
+<h2 id="2-3-距离相关系数-Distance-correlation"><a href="#2-3-距离相关系数-Distance-correlation" class="headerlink" title="2.3 距离相关系数 (Distance correlation)"></a><strong>2.3 距离相关系数 (Distance correlation)</strong></h2><p>距离相关系数是为了克服Pearson相关系数的弱点而生的。在x和x^2这个例子中，即便Pearson相关系数是0，我们也不能断定这两个变量是独立的（有可能是非线性相关）；但如果距离相关系数是0，那么我们就可以说这两个变量是独立的。</p>
+<p>R的<a href="https://link.zhihu.com/?target=http%3A//cran.r-project.org/web/packages/energy/index.html">energy</a>包里提供了距离相关系数的实现，另外这是<a href="https://link.zhihu.com/?target=https%3A//gist.github.com/josef-pkt/2938402">Python gist</a>的实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#R-code</span><br><span class="line">&gt; x &#x3D; runif (1000, -1, 1)</span><br><span class="line">&gt; dcor(x, x**2)</span><br><span class="line">[1] 0.4943864</span><br></pre></td></tr></table></figure>
+
+<p>尽管有MIC和距离相关系数在了，但当变量之间的关系接近线性相关的时候，Pearson相关系数仍然是不可替代的。第一、Pearson相关系数计算速度快，这在处理大规模数据的时候很重要。第二、Pearson相关系数的取值区间是[-1，1]，而MIC和距离相关系数都是[0，1]。这个特点使得Pearson相关系数能够表征更丰富的关系，符号表示关系的正负，绝对值能够表示强度。当然，Pearson相关性有效的前提是两个变量的变化关系是单调的。</p>
+<h2 id="2-4-基于学习模型的特征排序-Model-based-ranking"><a href="#2-4-基于学习模型的特征排序-Model-based-ranking" class="headerlink" title="2.4 基于学习模型的特征排序 (Model based ranking)"></a><strong>2.4 基于学习模型的特征排序 (Model based ranking)</strong></h2><p>这种方法的思路是直接使用你要用的机器学习算法，针对每个单独的特征和响应变量建立预测模型。其实Pearson相关系数等价于线性回归里的标准化回归系数。假如某个特征和响应变量之间的关系是非线性的，可以用基于树的方法（决策树、随机森林）、或者扩展的线性模型等。基于树的方法比较易于使用，因为他们对非线性关系的建模比较好，并且不需要太多的调试。但要注意过拟合问题，因此树的深度最好不要太大，再就是运用交叉验证。</p>
+<p>在<a href="https://link.zhihu.com/?target=https%3A//archive.ics.uci.edu/ml/datasets/Housing">波士顿房价数据集</a>上使用sklearn的<a href="https://link.zhihu.com/?target=http%3A//scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">随机森林回归</a>给出一个单变量选择的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.cross_validation import cross_val_score, ShuffleSplit</span><br><span class="line">from sklearn.datasets import load_boston</span><br><span class="line">from sklearn.ensemble import RandomForestRegressor</span><br><span class="line"></span><br><span class="line">#Load boston housing dataset as an example</span><br><span class="line">boston &#x3D; load_boston()</span><br><span class="line">X &#x3D; boston[&quot;data&quot;]</span><br><span class="line">Y &#x3D; boston[&quot;target&quot;]</span><br><span class="line">names &#x3D; boston[&quot;feature_names&quot;]</span><br><span class="line"></span><br><span class="line">rf &#x3D; RandomForestRegressor(n_estimators&#x3D;20, max_depth&#x3D;4)</span><br><span class="line">scores &#x3D; []</span><br><span class="line">for i in range(X.shape[1]):</span><br><span class="line">     score &#x3D; cross_val_score(rf, X[:, i:i+1], Y, scoring&#x3D;&quot;r2&quot;,</span><br><span class="line">                              cv&#x3D;ShuffleSplit(len(X), 3, .3))</span><br><span class="line">     scores.append((round(np.mean(score), 3), names[i]))</span><br><span class="line">print sorted(scores, reverse&#x3D;True)</span><br></pre></td></tr></table></figure>
+
+<p>[(0.636, ‘LSTAT’), (0.59, ‘RM’), (0.472, ‘NOX’), (0.369, ‘INDUS’), (0.311, ‘PTRATIO’), (0.24, ‘TAX’), (0.24, ‘CRIM’), (0.185, ‘RAD’), (0.16, ‘ZN’), (0.087, ‘B’), (0.062, ‘DIS’), (0.036, ‘CHAS’), (0.027, ‘AGE’)]</p>
+<h2 id="3-线性模型和正则化"><a href="#3-线性模型和正则化" class="headerlink" title="3 线性模型和正则化"></a><strong>3 线性模型和正则化</strong></h2><p>单变量特征选择方法独立的衡量每个特征与响应变量之间的关系，另一种主流的特征选择方法是基于机器学习模型的方法。有些机器学习方法本身就具有对特征进行打分的机制，或者很容易将其运用到特征选择任务中，例如回归模型，SVM，决策树，随机森林等等。说句题外话，这种方法好像在一些地方叫做wrapper类型，大概意思是说，特征排序模型和机器学习模型是耦盒在一起的，对应的非wrapper类型的特征选择方法叫做filter类型。</p>
+<p>下面将介绍如何用回归模型的系数来选择特征。越是重要的特征在模型中对应的系数就会越大，而跟输出变量越是无关的特征对应的系数就会越接近于0。在噪音不多的数据上，或者是数据量远远大于特征数的数据上，如果特征之间相对来说是比较独立的，那么即便是运用最简单的线性回归模型也一样能取得非常好的效果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">np.random.seed(0)</span><br><span class="line">size &#x3D; 5000</span><br><span class="line"></span><br><span class="line">#A dataset with 3 features</span><br><span class="line">X &#x3D; np.random.normal(0, 1, (size, 3))</span><br><span class="line">#Y &#x3D; X0 + 2*X1 + noise</span><br><span class="line">Y &#x3D; X[:,0] + 2*X[:,1] + np.random.normal(0, 2, size)</span><br><span class="line">lr &#x3D; LinearRegression()</span><br><span class="line">lr.fit(X, Y)</span><br><span class="line"></span><br><span class="line">#A helper method for pretty-printing linear models</span><br><span class="line">def pretty_print_linear(coefs, names &#x3D; None, sort &#x3D; False):</span><br><span class="line">    if names &#x3D;&#x3D; None:</span><br><span class="line">        names &#x3D; [&quot;X%s&quot; % x for x in range(len(coefs))]</span><br><span class="line">    lst &#x3D; zip(coefs, names)</span><br><span class="line">    if sort:</span><br><span class="line">        lst &#x3D; sorted(lst,  key &#x3D; lambda x:-np.abs(x[0]))</span><br><span class="line">    return &quot; + &quot;.join(&quot;%s * %s&quot; % (round(coef, 3), name)</span><br><span class="line">                                   for coef, name in lst)</span><br><span class="line"></span><br><span class="line">print &quot;Linear model:&quot;, pretty_print_linear(lr.coef_)</span><br></pre></td></tr></table></figure>
+
+<p>Linear model: 0.984 * X0 + 1.995 * X1 + -0.041 * X2</p>
+<p>在这个例子当中，尽管数据中存在一些噪音，但这种特征选择模型仍然能够很好的体现出数据的底层结构。当然这也是因为例子中的这个问题非常适合用线性模型来解：特征和响应变量之间全都是线性关系，并且特征之间均是独立的。</p>
+<p>在很多实际的数据当中，往往存在多个互相关联的特征，这时候模型就会变得不稳定，数据中细微的变化就可能导致模型的巨大变化（模型的变化本质上是系数，或者叫参数，可以理解成W），这会让模型的预测变得困难，这种现象也称为多重共线性。例如，假设我们有个数据集，它的真实模型应该是Y=X1+X2，当我们观察的时候，发现Y’=X1+X2+e，e是噪音。如果X1和X2之间存在线性关系，例如X1约等于X2，这个时候由于噪音e的存在，我们学到的模型可能就不是Y=X1+X2了，有可能是Y=2X1，或者Y=-X1+3X2。</p>
+<p>下边这个例子当中，在同一个数据上加入了一些噪音，用随机森林算法进行特征选择。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line"></span><br><span class="line">size &#x3D; 100</span><br><span class="line">np.random.seed(seed&#x3D;5)</span><br><span class="line"></span><br><span class="line">X_seed &#x3D; np.random.normal(0, 1, size)</span><br><span class="line">X1 &#x3D; X_seed + np.random.normal(0, .1, size)</span><br><span class="line">X2 &#x3D; X_seed + np.random.normal(0, .1, size)</span><br><span class="line">X3 &#x3D; X_seed + np.random.normal(0, .1, size)</span><br><span class="line"></span><br><span class="line">Y &#x3D; X1 + X2 + X3 + np.random.normal(0,1, size)</span><br><span class="line">X &#x3D; np.array([X1, X2, X3]).T</span><br><span class="line"></span><br><span class="line">lr &#x3D; LinearRegression()</span><br><span class="line">lr.fit(X,Y)</span><br><span class="line">print &quot;Linear model:&quot;, pretty_print_linear(lr.coef_)</span><br></pre></td></tr></table></figure>
+
+<p>Linear model: -1.291 * X0 + 1.591 * X1 + 2.747 * X2</p>
+<p>系数之和接近3，基本上和上上个例子的结果一致，应该说学到的模型对于预测来说还是不错的。但是，如果从系数的字面意思上去解释特征的重要性的话，X3对于输出变量来说具有很强的正面影响，而X1具有负面影响，而实际上所有特征与输出变量之间的影响是均等的。</p>
+<p>同样的方法和套路可以用到类似的线性模型上，比如逻辑回归。</p>
+<h2 id="3-1-正则化模型"><a href="#3-1-正则化模型" class="headerlink" title="3.1 正则化模型"></a><strong>3.1 正则化模型</strong></h2><p>正则化就是把额外的约束或者惩罚项加到已有模型（损失函数）上，以防止过拟合并提高泛化能力。损失函数由原来的E(X,Y)变为E(X,Y)+alpha||w||，w是模型系数组成的向量（有些地方也叫参数parameter，coefficients），||·||一般是L1或者L2范数，alpha是一个可调的参数，控制着正则化的强度。当用在线性模型上时，L1正则化和L2正则化也称为Lasso和Ridge。</p>
+<h2 id="3-2-L1正则化-Lasso"><a href="#3-2-L1正则化-Lasso" class="headerlink" title="3.2 L1正则化/Lasso"></a><strong>3.2 L1正则化/Lasso</strong></h2><p>L1正则化将系数w的l1范数作为惩罚项加到损失函数上，由于正则项非零，这就迫使那些弱的特征所对应的系数变成0。因此L1正则化往往会使学到的模型很稀疏（系数w经常为0），这个特性使得L1正则化成为一种很好的特征选择方法。</p>
+<p>Scikit-learn为线性回归提供了Lasso，为分类提供了L1逻辑回归。</p>
+<p>下面的例子在波士顿房价数据上运行了Lasso，其中参数alpha是通过grid search进行优化的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.linear_model import Lasso</span><br><span class="line">from sklearn.preprocessing import StandardScaler</span><br><span class="line">from sklearn.datasets import load_boston</span><br><span class="line"></span><br><span class="line">boston &#x3D; load_boston()</span><br><span class="line">scaler &#x3D; StandardScaler()</span><br><span class="line">X &#x3D; scaler.fit_transform(boston[&quot;data&quot;])</span><br><span class="line">Y &#x3D; boston[&quot;target&quot;]</span><br><span class="line">names &#x3D; boston[&quot;feature_names&quot;]</span><br><span class="line"></span><br><span class="line">lasso &#x3D; Lasso(alpha&#x3D;.3)</span><br><span class="line">lasso.fit(X, Y)</span><br><span class="line"></span><br><span class="line">print &quot;Lasso model: &quot;, pretty_print_linear(lasso.coef_, names, sort &#x3D; True)</span><br></pre></td></tr></table></figure>
+
+<p>Lasso model: -3.707 * LSTAT + 2.992 * RM + -1.757 * PTRATIO + -1.081 * DIS + -0.7 * NOX + 0.631 * B + 0.54 * CHAS + -0.236 * CRIM + 0.081 * ZN + -0.0 * INDUS + -0.0 * AGE + 0.0 * RAD + -0.0 * TAX</p>
+<p>可以看到，很多特征的系数都是0。如果继续增加alpha的值，得到的模型就会越来越稀疏，即越来越多的特征系数会变成0。</p>
+<p>然而，L1正则化像非正则化线性模型一样也是不稳定的，如果特征集合中具有相关联的特征，当数据发生细微变化时也有可能导致很大的模型差异。</p>
+<h2 id="3-3-L2正则化-Ridge-regression"><a href="#3-3-L2正则化-Ridge-regression" class="headerlink" title="3.3 L2正则化/Ridge regression"></a><strong>3.3 L2正则化/Ridge regression</strong></h2><p>L2正则化将系数向量的L2范数添加到了损失函数中。由于L2惩罚项中系数是二次方的，这使得L2和L1有着诸多差异，最明显的一点就是，L2正则化会让系数的取值变得平均。对于关联特征，这意味着他们能够获得更相近的对应系数。还是以Y=X1+X2为例，假设X1和X2具有很强的关联，如果用L1正则化，不论学到的模型是Y=X1+X2还是Y=2X1，惩罚都是一样的，都是2<em>alpha。但是对于L2来说，第一个模型的惩罚项是2</em>alpha，但第二个模型的是4*alpha。可以看出，系数之和为常数时，各系数相等时惩罚是最小的，所以才有了L2会让各个系数趋于相同的特点。</p>
+<p>可以看出，L2正则化对于特征选择来说一种稳定的模型，不像L1正则化那样，系数会因为细微的数据变化而波动。所以L2正则化和L1正则化提供的价值是不同的，L2正则化对于特征理解来说更加有用：表示能力强的特征对应的系数是非零。</p>
+<p>回过头来看看3个互相关联的特征的例子，分别以10个不同的种子随机初始化运行10次，来观察L1和L2正则化的稳定性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.linear_model import Ridge</span><br><span class="line">from sklearn.metrics import r2_score</span><br><span class="line">size &#x3D; 100</span><br><span class="line"></span><br><span class="line">#We run the method 10 times with different random seeds</span><br><span class="line">for i in range(10):</span><br><span class="line">    print &quot;Random seed %s&quot; % i</span><br><span class="line">    np.random.seed(seed&#x3D;i)</span><br><span class="line">    X_seed &#x3D; np.random.normal(0, 1, size)</span><br><span class="line">    X1 &#x3D; X_seed + np.random.normal(0, .1, size)</span><br><span class="line">    X2 &#x3D; X_seed + np.random.normal(0, .1, size)</span><br><span class="line">    X3 &#x3D; X_seed + np.random.normal(0, .1, size)</span><br><span class="line">    Y &#x3D; X1 + X2 + X3 + np.random.normal(0, 1, size)</span><br><span class="line">    X &#x3D; np.array([X1, X2, X3]).T</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    lr &#x3D; LinearRegression()</span><br><span class="line">    lr.fit(X,Y)</span><br><span class="line">    print &quot;Linear model:&quot;, pretty_print_linear(lr.coef_)</span><br><span class="line"></span><br><span class="line">    ridge &#x3D; Ridge(alpha&#x3D;10)</span><br><span class="line">    ridge.fit(X,Y)</span><br><span class="line">    print &quot;Ridge model:&quot;, pretty_print_linear(ridge.coef_)</span><br><span class="line">    print</span><br></pre></td></tr></table></figure>
+
+<p>Random seed 0 Linear model: 0.728 * X0 + 2.309 * X1 + -0.082 * X2 Ridge model: 0.938 * X0 + 1.059 * X1 + 0.877 * X2</p>
+<p>Random seed 1 Linear model: 1.152 * X0 + 2.366 * X1 + -0.599 * X2 Ridge model: 0.984 * X0 + 1.068 * X1 + 0.759 * X2</p>
+<p>Random seed 2 Linear model: 0.697 * X0 + 0.322 * X1 + 2.086 * X2 Ridge model: 0.972 * X0 + 0.943 * X1 + 1.085 * X2</p>
+<p>Random seed 3 Linear model: 0.287 * X0 + 1.254 * X1 + 1.491 * X2 Ridge model: 0.919 * X0 + 1.005 * X1 + 1.033 * X2</p>
+<p>Random seed 4 Linear model: 0.187 * X0 + 0.772 * X1 + 2.189 * X2 Ridge model: 0.964 * X0 + 0.982 * X1 + 1.098 * X2</p>
+<p>Random seed 5 Linear model: -1.291 * X0 + 1.591 * X1 + 2.747 * X2 Ridge model: 0.758 * X0 + 1.011 * X1 + 1.139 * X2</p>
+<p>Random seed 6 Linear model: 1.199 * X0 + -0.031 * X1 + 1.915 * X2 Ridge model: 1.016 * X0 + 0.89 * X1 + 1.091 * X2</p>
+<p>Random seed 7 Linear model: 1.474 * X0 + 1.762 * X1 + -0.151 * X2 Ridge model: 1.018 * X0 + 1.039 * X1 + 0.901 * X2</p>
+<p>Random seed 8 Linear model: 0.084 * X0 + 1.88 * X1 + 1.107 * X2 Ridge model: 0.907 * X0 + 1.071 * X1 + 1.008 * X2</p>
+<p>Random seed 9 Linear model: 0.714 * X0 + 0.776 * X1 + 1.364 * X2 Ridge model: 0.896 * X0 + 0.903 * X1 + 0.98 * X2</p>
+<p>可以看出，不同的数据上线性回归得到的模型（系数）相差甚远，但对于L2正则化模型来说，结果中的系数非常的稳定，差别较小，都比较接近于1，能够反映出数据的内在结构。</p>
+<h2 id="4-随机森林"><a href="#4-随机森林" class="headerlink" title="4 随机森林"></a><strong>4 随机森林</strong></h2><p>随机森林具有准确率高、鲁棒性好、易于使用等优点，这使得它成为了目前最流行的机器学习算法之一。随机森林提供了两种特征选择的方法：mean decrease impurity和mean decrease accuracy。</p>
+<h2 id="4-1-平均不纯度减少-mean-decrease-impurity"><a href="#4-1-平均不纯度减少-mean-decrease-impurity" class="headerlink" title="4.1 平均不纯度减少 mean decrease impurity"></a><strong>4.1 平均不纯度减少 mean decrease impurity</strong></h2><p>随机森林由多个决策树构成。决策树中的每一个节点都是关于某个特征的条件，为的是将数据集按照不同的响应变量一分为二。利用不纯度可以确定节点（最优条件），对于分类问题，通常采用<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Decision_tree_learning%23Gini_impurity">基尼不纯度</a>或者<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Information_gain_in_decision_trees">信息增益</a>，对于回归问题，通常采用的是<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Variance">方差</a>或者最小二乘拟合。当训练决策树的时候，可以计算出每个特征减少了多少树的不纯度。对于一个决策树森林来说，可以算出每个特征平均减少了多少不纯度，并把它平均减少的不纯度作为特征选择的值。</p>
+<p>下边的例子是sklearn中基于随机森林的特征重要度度量方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.datasets import load_boston</span><br><span class="line">from sklearn.ensemble import RandomForestRegressor</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">#Load boston housing dataset as an example</span><br><span class="line">boston &#x3D; load_boston()</span><br><span class="line">X &#x3D; boston[&quot;data&quot;]</span><br><span class="line">Y &#x3D; boston[&quot;target&quot;]</span><br><span class="line">names &#x3D; boston[&quot;feature_names&quot;]</span><br><span class="line">rf &#x3D; RandomForestRegressor()</span><br><span class="line">rf.fit(X, Y)</span><br><span class="line">print &quot;Features sorted by their score:&quot;</span><br><span class="line">print sorted(zip(map(lambda x: round(x, 4), rf.feature_importances_), names), </span><br><span class="line">             reverse&#x3D;True)</span><br></pre></td></tr></table></figure>
+
+<p>Features sorted by their score: [(0.5298, ‘LSTAT’), (0.4116, ‘RM’), (0.0252, ‘DIS’), (0.0172, ‘CRIM’), (0.0065, ‘NOX’), (0.0035, ‘PTRATIO’), (0.0021, ‘TAX’), (0.0017, ‘AGE’), (0.0012, ‘B’), (0.0008, ‘INDUS’), (0.0004, ‘RAD’), (0.0001, ‘CHAS’), (0.0, ‘ZN’)]</p>
+<p>这里特征得分实际上采用的是<a href="https://link.zhihu.com/?target=http%3A//www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm%23giniimp">Gini Importance</a>。使用基于不纯度的方法的时候，要记住：1、这种方法存在<a href="https://link.zhihu.com/?target=http%3A//link.springer.com/article/10.1186%2F1471-2105-8-25">偏向</a>，对具有更多类别的变量会更有利；2、对于存在关联的多个特征，其中任意一个都可以作为指示器（优秀的特征），并且一旦某个特征被选择之后，其他特征的重要度就会急剧下降，因为不纯度已经被选中的那个特征降下来了，其他的特征就很难再降低那么多不纯度了，这样一来，只有先被选中的那个特征重要度很高，其他的关联特征重要度往往较低。在理解数据时，这就会造成误解，导致错误的认为先被选中的特征是很重要的，而其余的特征是不重要的，但实际上这些特征对响应变量的作用确实非常接近的（这跟Lasso是很像的）。</p>
+<p><a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Random_subspace_method">特征随机选择</a>方法稍微缓解了这个问题，但总的来说并没有完全解决。下面的例子中，X0、X1、X2是三个互相关联的变量，在没有噪音的情况下，输出变量是三者之和。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">size &#x3D; 10000</span><br><span class="line">np.random.seed(seed&#x3D;10)</span><br><span class="line">X_seed &#x3D; np.random.normal(0, 1, size)</span><br><span class="line">X0 &#x3D; X_seed + np.random.normal(0, .1, size)</span><br><span class="line">X1 &#x3D; X_seed + np.random.normal(0, .1, size)</span><br><span class="line">X2 &#x3D; X_seed + np.random.normal(0, .1, size)</span><br><span class="line">X &#x3D; np.array([X0, X1, X2]).T</span><br><span class="line">Y &#x3D; X0 + X1 + X2</span><br><span class="line"></span><br><span class="line">rf &#x3D; RandomForestRegressor(n_estimators&#x3D;20, max_features&#x3D;2)</span><br><span class="line">rf.fit(X, Y);</span><br><span class="line">print &quot;Scores for X0, X1, X2:&quot;, map(lambda x:round (x,3),</span><br><span class="line">                                    rf.feature_importances_)</span><br></pre></td></tr></table></figure>
+
+<p>Scores for X0, X1, X2: [0.278, 0.66, 0.062]</p>
+<p>当计算特征重要性时，可以看到X1的重要度比X2的重要度要高出10倍，但实际上他们真正的重要度是一样的。尽管数据量已经很大且没有噪音，且用了20棵树来做随机选择，但这个问题还是会存在。</p>
+<p>需要注意的一点是，关联特征的打分存在不稳定的现象，这不仅仅是随机森林特有的，大多数基于模型的特征选择方法都存在这个问题。</p>
+<h2 id="4-2-平均精确率减少-Mean-decrease-accuracy"><a href="#4-2-平均精确率减少-Mean-decrease-accuracy" class="headerlink" title="4.2 平均精确率减少 Mean decrease accuracy"></a><strong>4.2 平均精确率减少 Mean decrease accuracy</strong></h2><p>另一种常用的特征选择方法就是直接度量每个特征对模型精确率的影响。主要思路是打乱每个特征的特征值顺序，并且度量顺序变动对模型的精确率的影响。很明显，对于不重要的变量来说，打乱顺序对模型的精确率影响不会太大，但是对于重要的变量来说，打乱顺序就会降低模型的精确率。</p>
+<p>这个方法sklearn中没有直接提供，但是很容易实现，下面继续在波士顿房价数据集上进行实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.cross_validation import ShuffleSplit</span><br><span class="line">from sklearn.metrics import r2_score</span><br><span class="line">from collections import defaultdict</span><br><span class="line"></span><br><span class="line">X &#x3D; boston[&quot;data&quot;]</span><br><span class="line">Y &#x3D; boston[&quot;target&quot;]</span><br><span class="line"></span><br><span class="line">rf &#x3D; RandomForestRegressor()</span><br><span class="line">scores &#x3D; defaultdict(list)</span><br><span class="line"></span><br><span class="line">#crossvalidate the scores on a number of different random splits of the data</span><br><span class="line">for train_idx, test_idx in ShuffleSplit(len(X), 100, .3):</span><br><span class="line">    X_train, X_test &#x3D; X[train_idx], X[test_idx]</span><br><span class="line">    Y_train, Y_test &#x3D; Y[train_idx], Y[test_idx]</span><br><span class="line">    r &#x3D; rf.fit(X_train, Y_train)</span><br><span class="line">    acc &#x3D; r2_score(Y_test, rf.predict(X_test))</span><br><span class="line">    for i in range(X.shape[1]):</span><br><span class="line">        X_t &#x3D; X_test.copy()</span><br><span class="line">        np.random.shuffle(X_t[:, i])</span><br><span class="line">        shuff_acc &#x3D; r2_score(Y_test, rf.predict(X_t))</span><br><span class="line">        scores[names[i]].append((acc-shuff_acc)&#x2F;acc)</span><br><span class="line">print &quot;Features sorted by their score:&quot;</span><br><span class="line">print sorted([(round(np.mean(score), 4), feat) for</span><br><span class="line">              feat, score in scores.items()], reverse&#x3D;True)</span><br></pre></td></tr></table></figure>
+
+<p>Features sorted by their score: [(0.7276, ‘LSTAT’), (0.5675, ‘RM’), (0.0867, ‘DIS’), (0.0407, ‘NOX’), (0.0351, ‘CRIM’), (0.0233, ‘PTRATIO’), (0.0168, ‘TAX’), (0.0122, ‘AGE’), (0.005, ‘B’), (0.0048, ‘INDUS’), (0.0043, ‘RAD’), (0.0004, ‘ZN’), (0.0001, ‘CHAS’)]</p>
+<p>在这个例子当中，LSTAT和RM这两个特征对模型的性能有着很大的影响，打乱这两个特征的特征值使得模型的性能下降了73%和57%。注意，尽管这些我们是在所有特征上进行了训练得到了模型，然后才得到了每个特征的重要性测试，这并不意味着我们扔掉某个或者某些重要特征后模型的性能就一定会下降很多，因为即便某个特征删掉之后，其关联特征一样可以发挥作用，让模型性能基本上不变。</p>
+<h2 id="5-两种顶层特征选择算法"><a href="#5-两种顶层特征选择算法" class="headerlink" title="5 两种顶层特征选择算法"></a><strong>5 两种顶层特征选择算法</strong></h2><p>之所以叫做顶层，是因为他们都是建立在基于模型的特征选择方法基础之上的，例如回归和SVM，在不同的子集上建立模型，然后汇总最终确定特征得分。</p>
+<h2 id="5-1-稳定性选择-Stability-selection"><a href="#5-1-稳定性选择-Stability-selection" class="headerlink" title="5.1 稳定性选择 Stability selection"></a><strong>5.1 稳定性选择 Stability selection</strong></h2><p>稳定性选择是一种基于二次抽样和选择算法相结合较新的方法，选择算法可以是回归、SVM或其他类似的方法。它的主要思想是在不同的数据子集和特征子集上运行特征选择算法，不断的重复，最终汇总特征选择结果，比如可以统计某个特征被认为是重要特征的频率（被选为重要特征的次数除以它所在的子集被测试的次数）。理想情况下，重要特征的得分会接近100%。稍微弱一点的特征得分会是非0的数，而最无用的特征得分将会接近于0。</p>
+<p>sklearn在<a href="https://link.zhihu.com/?target=http%3A//scikit-learn.org/stable/modules/generated/sklearn.linear_model.RandomizedLasso.html">随机lasso</a>和<a href="https://link.zhihu.com/?target=http%3A//scikit-learn.org/stable/modules/generated/sklearn.linear_model.RandomizedLogisticRegression.html">随机逻辑回归</a>中有对稳定性选择的实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.linear_model import RandomizedLasso</span><br><span class="line">from sklearn.datasets import load_boston</span><br><span class="line">boston &#x3D; load_boston()</span><br><span class="line"></span><br><span class="line">#using the Boston housing data. </span><br><span class="line">#Data gets scaled automatically by sklearn&#39;s implementation</span><br><span class="line">X &#x3D; boston[&quot;data&quot;]</span><br><span class="line">Y &#x3D; boston[&quot;target&quot;]</span><br><span class="line">names &#x3D; boston[&quot;feature_names&quot;]</span><br><span class="line"></span><br><span class="line">rlasso &#x3D; RandomizedLasso(alpha&#x3D;0.025)</span><br><span class="line">rlasso.fit(X, Y)</span><br><span class="line"></span><br><span class="line">print &quot;Features sorted by their score:&quot;</span><br><span class="line">print sorted(zip(map(lambda x: round(x, 4), rlasso.scores_), </span><br><span class="line">                 names), reverse&#x3D;True)</span><br></pre></td></tr></table></figure>
+
+<p>Features sorted by their score: [(1.0, ‘RM’), (1.0, ‘PTRATIO’), (1.0, ‘LSTAT’), (0.62, ‘CHAS’), (0.595, ‘B’), (0.39, ‘TAX’), (0.385, ‘CRIM’), (0.25, ‘DIS’), (0.22, ‘NOX’), (0.125, ‘INDUS’), (0.045, ‘ZN’), (0.02, ‘RAD’), (0.015, ‘AGE’)]</p>
+<p>在上边这个例子当中，最高的3个特征得分是1.0，这表示他们总会被选作有用的特征（当然，得分会收到正则化参数alpha的影响，但是sklearn的随机lasso能够自动选择最优的alpha）。接下来的几个特征得分就开始下降，但是下降的不是特别急剧，这跟纯lasso的方法和随机森林的结果不一样。能够看出稳定性选择对于克服过拟合和对数据理解来说都是有帮助的：总的来说，好的特征不会因为有相似的特征、关联特征而得分为0，这跟Lasso是不同的。对于特征选择任务，在许多数据集和环境下，稳定性选择往往是性能最好的方法之一。</p>
+<h2 id="5-2-递归特征消除-Recursive-feature-elimination-RFE"><a href="#5-2-递归特征消除-Recursive-feature-elimination-RFE" class="headerlink" title="5.2 递归特征消除 Recursive feature elimination (RFE)"></a><strong>5.2 递归特征消除 Recursive feature elimination (RFE)</strong></h2><p>递归特征消除的主要思想是反复的构建模型（如SVM或者回归模型）然后选出最好的（或者最差的）的特征（可以根据系数来选），把选出来的特征放到一遍，然后在剩余的特征上重复这个过程，直到所有特征都遍历了。这个过程中特征被消除的次序就是特征的排序。因此，这是一种寻找最优特征子集的贪心算法。</p>
+<p>RFE的稳定性很大程度上取决于在迭代的时候底层用哪种模型。例如，假如RFE采用的普通的回归，没有经过正则化的回归是不稳定的，那么RFE就是不稳定的；假如采用的是Ridge，而用Ridge正则化的回归是稳定的，那么RFE就是稳定的。</p>
+<p>Sklearn提供了<a href="https://link.zhihu.com/?target=http%3A//scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFE.html">RFE</a>包，可以用于特征消除，还提供了<a href="https://link.zhihu.com/?target=http%3A//scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html">RFECV</a>，可以通过交叉验证来对的特征进行排序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.feature_selection import RFE</span><br><span class="line">from sklearn.linear_model import LinearRegression</span><br><span class="line"></span><br><span class="line">boston &#x3D; load_boston()</span><br><span class="line">X &#x3D; boston[&quot;data&quot;]</span><br><span class="line">Y &#x3D; boston[&quot;target&quot;]</span><br><span class="line">names &#x3D; boston[&quot;feature_names&quot;]</span><br><span class="line"></span><br><span class="line">#use linear regression as the model</span><br><span class="line">lr &#x3D; LinearRegression()</span><br><span class="line">#rank all features, i.e continue the elimination until the last one</span><br><span class="line">rfe &#x3D; RFE(lr, n_features_to_select&#x3D;1)</span><br><span class="line">rfe.fit(X,Y)</span><br><span class="line"></span><br><span class="line">print &quot;Features sorted by their rank:&quot;</span><br><span class="line">print sorted(zip(map(lambda x: round(x, 4), rfe.ranking_), names))</span><br></pre></td></tr></table></figure>
+
+<p>Features sorted by their rank: [(1.0, ‘NOX’), (2.0, ‘RM’), (3.0, ‘CHAS’), (4.0, ‘PTRATIO’), (5.0, ‘DIS’), (6.0, ‘LSTAT’), (7.0, ‘RAD’), (8.0, ‘CRIM’), (9.0, ‘INDUS’), (10.0, ‘ZN’), (11.0, ‘TAX’), (12.0, ‘B’), (13.0, ‘AGE’)]</p>
+<h2 id="6-一个完整的例子"><a href="#6-一个完整的例子" class="headerlink" title="6 一个完整的例子"></a><strong>6 一个完整的例子</strong></h2><p>下面将本文所有提到的方法进行实验对比，数据集采用Friedman #1 回归数据（<a href="https://link.zhihu.com/?target=ftp%3A//ftp.uic.edu/pub/depts/econ/hhstokes/e538/Friedman_mars_1991.pdf">这篇论文</a>中的数据）。数据是用这个公式产生的：</p>
+<p><img src="../../../../../../Users/lengwei/SeaDrive/%E6%88%91%E7%9A%84%E8%B5%84%E6%96%99%E5%BA%93/%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0/media/v2-dda27e3c18bf85cf169de8a31cb9c3ea_hd.jpg" alt="img"></p>
+<p>X1到X5是由<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Univariate_distribution">单变量分布</a>生成的，e是<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Standard_normal_deviate">标准正态变量</a>N(0,1)。另外，原始的数据集中含有5个噪音变量 X5,…,X10，跟响应变量是独立的。我们增加了4个额外的变量X11,…X14，分别是X1,…,X4的关联变量，通过f(x)=x+N(0,0.01)生成，这将产生大于0.999的关联系数。这样生成的数据能够体现出不同的特征排序方法应对关联特征时的表现。</p>
+<p>接下来将会在上述数据上运行所有的特征选择方法，并且将每种方法给出的得分进行归一化，让取值都落在0-1之间。对于RFE来说，由于它给出的是顺序而不是得分，我们将最好的5个的得分定为1，其他的特征的得分均匀的分布在0-1之间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.datasets import load_boston</span><br><span class="line">from sklearn.linear_model import (LinearRegression, Ridge, </span><br><span class="line">                                  Lasso, RandomizedLasso)</span><br><span class="line">from sklearn.feature_selection import RFE, f_regression</span><br><span class="line">from sklearn.preprocessing import MinMaxScaler</span><br><span class="line">from sklearn.ensemble import RandomForestRegressor</span><br><span class="line">import numpy as np</span><br><span class="line">from minepy import MINE</span><br><span class="line"></span><br><span class="line">np.random.seed(0)</span><br><span class="line"></span><br><span class="line">size &#x3D; 750</span><br><span class="line">X &#x3D; np.random.uniform(0, 1, (size, 14))</span><br><span class="line"></span><br><span class="line">#&quot;Friedamn #1” regression problem</span><br><span class="line">Y &#x3D; (10 * np.sin(np.pi*X[:,0]*X[:,1]) + 20*(X[:,2] - .5)**2 +</span><br><span class="line">     10*X[:,3] + 5*X[:,4] + np.random.normal(0,1))</span><br><span class="line">#Add 3 additional correlated variables (correlated with X1-X3)</span><br><span class="line">X[:,10:] &#x3D; X[:,:4] + np.random.normal(0, .025, (size,4))</span><br><span class="line"></span><br><span class="line">names &#x3D; [&quot;x%s&quot; % i for i in range(1,15)]</span><br><span class="line"></span><br><span class="line">ranks &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">def rank_to_dict(ranks, names, order&#x3D;1):</span><br><span class="line">    minmax &#x3D; MinMaxScaler()</span><br><span class="line">    ranks &#x3D; minmax.fit_transform(order*np.array([ranks]).T).T[0]</span><br><span class="line">    ranks &#x3D; map(lambda x: round(x, 2), ranks)</span><br><span class="line">    return dict(zip(names, ranks ))</span><br><span class="line"></span><br><span class="line">lr &#x3D; LinearRegression(normalize&#x3D;True)</span><br><span class="line">lr.fit(X, Y)</span><br><span class="line">ranks[&quot;Linear reg&quot;] &#x3D; rank_to_dict(np.abs(lr.coef_), names)</span><br><span class="line"></span><br><span class="line">ridge &#x3D; Ridge(alpha&#x3D;7)</span><br><span class="line">ridge.fit(X, Y)</span><br><span class="line">ranks[&quot;Ridge&quot;] &#x3D; rank_to_dict(np.abs(ridge.coef_), names)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lasso &#x3D; Lasso(alpha&#x3D;.05)</span><br><span class="line">lasso.fit(X, Y)</span><br><span class="line">ranks[&quot;Lasso&quot;] &#x3D; rank_to_dict(np.abs(lasso.coef_), names)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rlasso &#x3D; RandomizedLasso(alpha&#x3D;0.04)</span><br><span class="line">rlasso.fit(X, Y)</span><br><span class="line">ranks[&quot;Stability&quot;] &#x3D; rank_to_dict(np.abs(rlasso.scores_), names)</span><br><span class="line"></span><br><span class="line">#stop the search when 5 features are left (they will get equal scores)</span><br><span class="line">rfe &#x3D; RFE(lr, n_features_to_select&#x3D;5)</span><br><span class="line">rfe.fit(X,Y)</span><br><span class="line">ranks[&quot;RFE&quot;] &#x3D; rank_to_dict(map(float, rfe.ranking_), names, order&#x3D;-1)</span><br><span class="line"></span><br><span class="line">rf &#x3D; RandomForestRegressor()</span><br><span class="line">rf.fit(X,Y)</span><br><span class="line">ranks[&quot;RF&quot;] &#x3D; rank_to_dict(rf.feature_importances_, names)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f, pval  &#x3D; f_regression(X, Y, center&#x3D;True)</span><br><span class="line">ranks[&quot;Corr.&quot;] &#x3D; rank_to_dict(f, names)</span><br><span class="line"></span><br><span class="line">mine &#x3D; MINE()</span><br><span class="line">mic_scores &#x3D; []</span><br><span class="line">for i in range(X.shape[1]):</span><br><span class="line">    mine.compute_score(X[:,i], Y)</span><br><span class="line">    m &#x3D; mine.mic()</span><br><span class="line">    mic_scores.append(m)</span><br><span class="line"></span><br><span class="line">ranks[&quot;MIC&quot;] &#x3D; rank_to_dict(mic_scores, names)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">r &#x3D; &#123;&#125;</span><br><span class="line">for name in names:</span><br><span class="line">    r[name] &#x3D; round(np.mean([ranks[method][name] </span><br><span class="line">                             for method in ranks.keys()]), 2)</span><br><span class="line"></span><br><span class="line">methods &#x3D; sorted(ranks.keys())</span><br><span class="line">ranks[&quot;Mean&quot;] &#x3D; r</span><br><span class="line">methods.append(&quot;Mean&quot;)</span><br><span class="line"></span><br><span class="line">print &quot;\t%s&quot; % &quot;\t&quot;.join(methods)</span><br><span class="line">for name in names:</span><br><span class="line">    print &quot;%s\t%s&quot; % (name, &quot;\t&quot;.join(map(str, </span><br><span class="line">                         [ranks[method][name] for method in methods])))</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="../../../../../../Users/lengwei/SeaDrive/%E6%88%91%E7%9A%84%E8%B5%84%E6%96%99%E5%BA%93/%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0/media/v2-7b4feb144b9845670d64c5150754aad9_hd.jpg" alt="img"></p>
+<p>从以上结果中可以找到一些有趣的发现：</p>
+<p>特征之间存在<strong>线性关联</strong>关系，每个特征都是独立评价的，因此X1,…X4的得分和X11,…X14的得分非常接近，而噪音特征X5,…,X10正如预期的那样和响应变量之间几乎没有关系。由于变量X3是二次的，因此X3和响应变量之间看不出有关系（除了MIC之外，其他方法都找不到关系）。这种方法能够衡量出特征和响应变量之间的线性关系，但若想选出优质特征来提升模型的泛化能力，这种方法就不是特别给力了，因为所有的优质特征都不可避免的会被挑出来两次。</p>
+<p><strong>Lasso</strong>能够挑出一些优质特征，同时让其他特征的系数趋于0。当如需要减少特征数的时候它很有用，但是对于数据理解来说不是很好用。（例如在结果表中，X11,X12,X13的得分都是0，好像他们跟输出变量之间没有很强的联系，但实际上不是这样的）</p>
+<p><strong>MIC</strong>对特征一视同仁，这一点上和关联系数有点像，另外，它能够找出X3和响应变量之间的非线性关系。</p>
+<p><strong>随机森林</strong>基于不纯度的排序结果非常鲜明，在得分最高的几个特征之后的特征，得分急剧的下降。从表中可以看到，得分第三的特征比第一的小4倍。而其他的特征选择算法就没有下降的这么剧烈。</p>
+<p><strong>Ridge</strong>将回归系数均匀的分摊到各个关联变量上，从表中可以看出，X11,…,X14和X1,…,X4的得分非常接近。</p>
+<p><strong>稳定性选择</strong>常常是一种既能够有助于理解数据又能够挑出优质特征的这种选择，在结果表中就能很好的看出。像Lasso一样，它能找到那些性能比较好的特征（X1，X2，X4，X5），同时，与这些特征关联度很强的变量也得到了较高的得分。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h2><ol>
+<li>对于理解数据、数据的结构、特点来说，单变量特征选择是个非常好的选择。尽管可以用它对特征进行排序来优化模型，但由于它不能发现冗余（例如假如一个特征子集，其中的特征之间具有很强的关联，那么从中选择最优的特征时就很难考虑到冗余的问题）。</li>
+<li>正则化的线性模型对于特征理解和特征选择来说是非常强大的工具。L1正则化能够生成稀疏的模型，对于选择特征子集来说非常有用；相比起L1正则化，L2正则化的表现更加稳定，由于有用的特征往往对应系数非零，因此L2正则化对于数据的理解来说很合适。由于响应变量和特征之间往往是非线性关系，可以采用basis expansion的方式将特征转换到一个更加合适的空间当中，在此基础上再考虑运用简单的线性模型。</li>
+<li>随机森林是一种非常流行的特征选择方法，它易于使用，一般不需要feature engineering、调参等繁琐的步骤，并且很多工具包都提供了平均不纯度下降方法。它的两个主要问题，1是重要的特征有可能得分很低（关联特征问题），2是这种方法对特征变量类别多的特征越有利（偏向问题）。尽管如此，这种方法仍然非常值得在你的应用中试一试。</li>
+<li>特征选择在很多机器学习和数据挖掘场景中都是非常有用的。在使用的时候要弄清楚自己的目标是什么，然后找到哪种方法适用于自己的任务。当选择最优特征以提升模型性能的时候，可以采用交叉验证的方法来验证某种方法是否比其他方法要好。当用特征选择的方法来理解数据的时候要留心，特征选择模型的稳定性非常重要，稳定性差的模型很容易就会导致错误的结论。对数据进行二次采样然后在子集上运行特征选择算法能够有所帮助，如果在各个子集上的结果是一致的，那就可以说在这个数据集上得出来的结论是可信的，可以用这种特征选择模型的结果来理解数据。</li>
+</ol>
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a><strong>Tips</strong></h2><p>什么是<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Chi-square_test">卡方检验</a>？用方差来衡量某个观测频率和理论频率之间差异性的方法</p>
+<p>什么是<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Pearson%27s_chi-squared_test">皮尔森卡方检验</a>？这是一种最常用的卡方检验方法，它有两个用途：1是计算某个变量对某种分布的拟合程度，2是根据两个观测变量的<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Contingency_table">Contingency table</a>来计算这两个变量是否是独立的。主要有三个步骤：第一步用方差和的方式来计算观测频率和理论频率之间卡方值；第二步算出卡方检验的自由度（行数-1乘以列数-1）；第三步比较卡方值和对应自由度的卡方分布，判断显著性。</p>
+<p>什么是<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/P-value">p-value</a>？简单地说，p-value就是为了验证假设和实际之间一致性的统计学意义的值，即假设检验。有些地方叫右尾概率，根据卡方值和自由度可以算出一个固定的p-value，</p>
+<p>什么是<a href="https://link.zhihu.com/?target=http%3A//www.answers.com/Q/What_is_a_response_variable">响应变量(response value)</a>？简单地说，模型的输入叫做explanatroy variables，模型的输出叫做response variables，其实就是要验证该特征对结果造成了什么样的影响</p>
+<p>什么是<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Statistical_power">统计能力(statistical power)</a>?</p>
+<p>什么是<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Metric_%28mathematics%29">度量(metric)</a>?</p>
+<p>什么是<a href="https://link.zhihu.com/?target=http%3A//zh.wikipedia.org/wiki/%E9%9B%B6%E5%81%87%E8%AE%BE">零假设(null hypothesis)</a>?在相关性检验中，一般会取“两者之间无关联”作为零假设，而在独立性检验中，一般会取“两者之间是独立”作为零假设。与零假设相对的是备择假设（对立假设），即希望证明是正确的另一种可能。</p>
+<p>什么是<a href="https://link.zhihu.com/?target=http%3A//en.wikipedia.org/wiki/Multicollinearity">多重共线性</a>？</p>
+<p>什么是<a href="https://link.zhihu.com/?target=http%3A//scikit-learn.org/stable/modules/grid_search.html">grid search</a>？</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://coolwin8.github.io">lengwei</a>
+            <p>原文链接：<a href="http://coolwin8.github.io/2020/04/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E7%89%B9%E5%BE%81/">http://coolwin8.github.io/2020/04/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E7%89%B9%E5%BE%81/</a>
+            <p>发表日期：<a href="http://coolwin8.github.io/2020/04/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E7%89%B9%E5%BE%81/">April 11th 2020, 2:11:56 pm</a>
+            <p>更新日期：<a href="http://coolwin8.github.io/2020/04/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E7%89%B9%E5%BE%81/">April 11th 2020, 2:23:54 pm</a>
+            <p>版权声明：本文采用<a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2020/04/13/maven%E8%BF%9E%E6%8E%A5nexus%E7%A7%81%E6%9C%8D%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/" title= "maven连接nexus私服配置文件详解">
+                    <div class="nextTitle">maven连接nexus私服配置文件详解</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2020/04/11/%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" title= "半监督学习   semi-supervisered">
+                    <div class="prevTitle">半监督学习   semi-supervisered</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:12345@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/coolwin8" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:30vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#"><span class="toc-number">1.</span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-去掉取值变化小的特征-Removing-features-with-low-variance"><span class="toc-number">1.1.</span> <span class="toc-text">1 去掉取值变化小的特征 Removing features with low variance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-单变量特征选择-Univariate-feature-selection"><span class="toc-number">1.2.</span> <span class="toc-text">2 单变量特征选择 Univariate feature selection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-Pearson相关系数-Pearson-Correlation"><span class="toc-number">1.3.</span> <span class="toc-text">2.1 Pearson相关系数 Pearson Correlation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-互信息和最大信息系数-Mutual-information-and-maximal-information-coefficient-MIC"><span class="toc-number">1.4.</span> <span class="toc-text">2.2 互信息和最大信息系数 Mutual information and maximal information coefficient (MIC)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-距离相关系数-Distance-correlation"><span class="toc-number">1.5.</span> <span class="toc-text">2.3 距离相关系数 (Distance correlation)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-基于学习模型的特征排序-Model-based-ranking"><span class="toc-number">1.6.</span> <span class="toc-text">2.4 基于学习模型的特征排序 (Model based ranking)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-线性模型和正则化"><span class="toc-number">1.7.</span> <span class="toc-text">3 线性模型和正则化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-正则化模型"><span class="toc-number">1.8.</span> <span class="toc-text">3.1 正则化模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-L1正则化-Lasso"><span class="toc-number">1.9.</span> <span class="toc-text">3.2 L1正则化&#x2F;Lasso</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-L2正则化-Ridge-regression"><span class="toc-number">1.10.</span> <span class="toc-text">3.3 L2正则化&#x2F;Ridge regression</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-随机森林"><span class="toc-number">1.11.</span> <span class="toc-text">4 随机森林</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-平均不纯度减少-mean-decrease-impurity"><span class="toc-number">1.12.</span> <span class="toc-text">4.1 平均不纯度减少 mean decrease impurity</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-平均精确率减少-Mean-decrease-accuracy"><span class="toc-number">1.13.</span> <span class="toc-text">4.2 平均精确率减少 Mean decrease accuracy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-两种顶层特征选择算法"><span class="toc-number">1.14.</span> <span class="toc-text">5 两种顶层特征选择算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-稳定性选择-Stability-selection"><span class="toc-number">1.15.</span> <span class="toc-text">5.1 稳定性选择 Stability selection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-递归特征消除-Recursive-feature-elimination-RFE"><span class="toc-number">1.16.</span> <span class="toc-text">5.2 递归特征消除 Recursive feature elimination (RFE)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-一个完整的例子"><span class="toc-number">1.17.</span> <span class="toc-text">6 一个完整的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.18.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tips"><span class="toc-number">1.19.</span> <span class="toc-text">Tips</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 7
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href= "/2020/04/14/%E5%88%A9%E7%94%A8softEther%20VPN%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE%E5%86%85%E9%83%A8%E7%BD%91%E7%BB%9C/" >利用softEther VPN远程访问内部网络</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href= "/2020/04/13/maven%E8%BF%9E%E6%8E%A5nexus%E7%A7%81%E6%9C%8D%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/" >maven连接nexus私服配置文件详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span><a class="archive-post-title" href= "/2020/04/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E7%89%B9%E5%BE%81/" >机器学习如何选择特征</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span><a class="archive-post-title" href= "/2020/04/11/%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" >半监督学习   semi-supervisered</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span><a class="archive-post-title" href= "/2020/04/11/%E9%80%9A%E7%94%A8%E6%B5%81%E7%A8%8B/" >通用流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span><a class="archive-post-title" href= "/2020/04/11/%E9%83%A8%E7%BD%B2PyPi%E7%A6%BB%E7%BA%BF%E7%A7%81%E6%9C%89%E5%BA%93/" >部署PyPi离线私有库</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/25</span><a class="archive-post-title" href= "/2020/03/26/hello-world/" >Hello World</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="半监督"><span class="iconfont-archer">&#xe606;</span>半监督</span>
+    
+        <span class="sidebar-tag-name" data-tags="机器学习"><span class="iconfont-archer">&#xe606;</span>机器学习</span>
+    
+        <span class="sidebar-tag-name" data-tags="配置管理"><span class="iconfont-archer">&#xe606;</span>配置管理</span>
+    
+        <span class="sidebar-tag-name" data-tags="nexus"><span class="iconfont-archer">&#xe606;</span>nexus</span>
+    
+        <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
+    
+        <span class="sidebar-tag-name" data-tags="网络配置"><span class="iconfont-archer">&#xe606;</span>网络配置</span>
+    
+        <span class="sidebar-tag-name" data-tags="VPN"><span class="iconfont-archer">&#xe606;</span>VPN</span>
+    
+        <span class="sidebar-tag-name" data-tags="内网访问"><span class="iconfont-archer">&#xe606;</span>内网访问</span>
+    
+        <span class="sidebar-tag-name" data-tags="pypi"><span class="iconfont-archer">&#xe606;</span>pypi</span>
+    
+        <span class="sidebar-tag-name" data-tags="部署"><span class="iconfont-archer">&#xe606;</span>部署</span>
+    
+        <span class="sidebar-tag-name" data-tags="特征选择"><span class="iconfont-archer">&#xe606;</span>特征选择</span>
+    
+        <span class="sidebar-tag-name" data-tags="网文精选"><span class="iconfont-archer">&#xe606;</span>网文精选</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="机器学习"><span class="iconfont-archer">&#xe60a;</span>机器学习</span>
+    
+        <span class="sidebar-category-name" data-categories="java-maven"><span class="iconfont-archer">&#xe60a;</span>java-maven</span>
+    
+        <span class="sidebar-category-name" data-categories="系统应用-网络应用"><span class="iconfont-archer">&#xe60a;</span>系统应用-网络应用</span>
+    
+        <span class="sidebar-category-name" data-categories="python"><span class="iconfont-archer">&#xe60a;</span>python</span>
+    
+        <span class="sidebar-category-name" data-categories="python/pypi"><span class="iconfont-archer">&#xe60a;</span>python/pypi</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "lengwei"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
