@@ -23,7 +23,7 @@
     <meta name="description" content="开发环境：IDEA，                  SprngBoot 2.0.4，                  Maven 2.19.1工程结构：                              父工程father     子模块  dao      （用于持久化数据跟数据库交互）     子模块  entity    （实体类）     子模块  service （处理业务">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SpringBoot+Maven多模块项目构建完整流程（转）">
-<meta property="og:url" content="http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%EF%BC%88%E8%BD%AC%EF%BC%89/index.html">
+<meta property="og:url" content="http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B/index.html">
 <meta property="og:site_name" content="CoolWin8的技术博客">
 <meta property="og:description" content="开发环境：IDEA，                  SprngBoot 2.0.4，                  Maven 2.19.1工程结构：                              父工程father     子模块  dao      （用于持久化数据跟数据库交互）     子模块  entity    （实体类）     子模块  service （处理业务">
 <meta property="og:locale" content="zh_CN">
@@ -558,9 +558,9 @@ height:30vh;
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://coolwin8.github.io">lengwei</a>
-            <p>原文链接：<a href="http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%EF%BC%88%E8%BD%AC%EF%BC%89/">http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%EF%BC%88%E8%BD%AC%EF%BC%89/</a>
-            <p>发表日期：<a href="http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%EF%BC%88%E8%BD%AC%EF%BC%89/">April 14th 2020, 8:44:42 pm</a>
-            <p>更新日期：<a href="http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%EF%BC%88%E8%BD%AC%EF%BC%89/">April 14th 2020, 1:03:16 pm</a>
+            <p>原文链接：<a href="http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B/">http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B/</a>
+            <p>发表日期：<a href="http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B/">April 14th 2020, 8:44:42 pm</a>
+            <p>更新日期：<a href="http://coolwin8.github.io/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B/">April 14th 2020, 1:03:16 pm</a>
             <p>版权声明：本文采用<a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -827,7 +827,7 @@ top:30vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">04/14</span><a class="archive-post-title" href= "/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%EF%BC%88%E8%BD%AC%EF%BC%89/" >SpringBoot+Maven多模块项目构建完整流程（转）</a>
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href= "/2020/04/14/SpringBoot-Maven%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B/" >SpringBoot+Maven多模块项目构建完整流程（转）</a>
         </li>
     
     
@@ -888,11 +888,11 @@ top:30vh;
     
         <span class="sidebar-tag-name" data-tags="配置管理"><span class="iconfont-archer">&#xe606;</span>配置管理</span>
     
-        <span class="sidebar-tag-name" data-tags="nexus"><span class="iconfont-archer">&#xe606;</span>nexus</span>
-    
         <span class="sidebar-tag-name" data-tags="kubectl"><span class="iconfont-archer">&#xe606;</span>kubectl</span>
     
         <span class="sidebar-tag-name" data-tags="命令参考"><span class="iconfont-archer">&#xe606;</span>命令参考</span>
+    
+        <span class="sidebar-tag-name" data-tags="nexus"><span class="iconfont-archer">&#xe606;</span>nexus</span>
     
         <span class="sidebar-tag-name" data-tags="半监督"><span class="iconfont-archer">&#xe606;</span>半监督</span>
     
@@ -904,13 +904,13 @@ top:30vh;
     
         <span class="sidebar-tag-name" data-tags="内网访问"><span class="iconfont-archer">&#xe606;</span>内网访问</span>
     
-        <span class="sidebar-tag-name" data-tags="特征选择"><span class="iconfont-archer">&#xe606;</span>特征选择</span>
-    
-        <span class="sidebar-tag-name" data-tags="网文精选"><span class="iconfont-archer">&#xe606;</span>网文精选</span>
-    
         <span class="sidebar-tag-name" data-tags="pypi"><span class="iconfont-archer">&#xe606;</span>pypi</span>
     
         <span class="sidebar-tag-name" data-tags="部署"><span class="iconfont-archer">&#xe606;</span>部署</span>
+    
+        <span class="sidebar-tag-name" data-tags="特征选择"><span class="iconfont-archer">&#xe606;</span>特征选择</span>
+    
+        <span class="sidebar-tag-name" data-tags="网文精选"><span class="iconfont-archer">&#xe606;</span>网文精选</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -949,19 +949,19 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="GitHub"><span class="iconfont-archer">&#xe60a;</span>GitHub</span>
     
-        <span class="sidebar-category-name" data-categories="java-maven"><span class="iconfont-archer">&#xe60a;</span>java-maven</span>
+        <span class="sidebar-category-name" data-categories="k8s生态"><span class="iconfont-archer">&#xe60a;</span>k8s生态</span>
     
         <span class="sidebar-category-name" data-categories="Java生态/SprintBoot"><span class="iconfont-archer">&#xe60a;</span>Java生态/SprintBoot</span>
     
-        <span class="sidebar-category-name" data-categories="k8s生态"><span class="iconfont-archer">&#xe60a;</span>k8s生态</span>
+        <span class="sidebar-category-name" data-categories="java-maven"><span class="iconfont-archer">&#xe60a;</span>java-maven</span>
     
         <span class="sidebar-category-name" data-categories="机器学习"><span class="iconfont-archer">&#xe60a;</span>机器学习</span>
     
         <span class="sidebar-category-name" data-categories="系统应用-网络应用"><span class="iconfont-archer">&#xe60a;</span>系统应用-网络应用</span>
     
-        <span class="sidebar-category-name" data-categories="k8s生态/k8s"><span class="iconfont-archer">&#xe60a;</span>k8s生态/k8s</span>
-    
         <span class="sidebar-category-name" data-categories="python"><span class="iconfont-archer">&#xe60a;</span>python</span>
+    
+        <span class="sidebar-category-name" data-categories="k8s生态/k8s"><span class="iconfont-archer">&#xe60a;</span>k8s生态/k8s</span>
     
         <span class="sidebar-category-name" data-categories="python/pypi"><span class="iconfont-archer">&#xe60a;</span>python/pypi</span>
     
