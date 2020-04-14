@@ -23,7 +23,7 @@
     <meta name="description" content="coolwin8的日常技术笔记">
 <meta property="og:type" content="website">
 <meta property="og:title" content="CoolWin8的技术博客">
-<meta property="og:url" content="http://coolwin8.github.io/index.html">
+<meta property="og:url" content="http://coolwin8.github.io/categories/GitHub/index.html">
 <meta property="og:site_name" content="CoolWin8的技术博客">
 <meta property="og:description" content="coolwin8的日常技术笔记">
 <meta property="og:locale" content="zh_CN">
@@ -87,6 +87,8 @@
 
     <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
@@ -211,10 +213,8 @@
 <meta name="generator" content="Hexo 4.2.0"></head>
 
     
-        <body class="home-body">
     
-    
-<header class="header index-header">
+<header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
@@ -230,34 +230,21 @@
 
 
 
-
-height:50vh;
 ">
     
     <!-- 主页  -->
-    
-    
-    <!-- 文章页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/index-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Wayne.Leng 的技术博客.
-            <!-- 文章页  -->
-            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
-            
-            
-                书山有路，学海无涯，滴水之聚，波涛万里。
-            
-            <!-- 文章页  -->
             
         </p>
         <!-- 文章页meta -->
@@ -369,59 +356,6 @@ height:50vh;
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2020/04/14/%E5%88%A9%E7%94%A8softEther%20VPN%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE%E5%86%85%E9%83%A8%E7%BD%91%E7%BB%9C/" >
-            
-                <span>利用softEther VPN远程访问内部网络</span>
-        </a>
-        <div class="abstract-content">
-            
-利用 softEther VPN 进行远程访问1作者: whr
-
-使用场景和前提条件
-内部网络受到保护，无法直接在内部网络中的主机中直接部署VPN server（搭建完无法连接到该server）
-用户需要从外部网络远程访问内部网络中的资源，如主机或打印机等等
-对内部网络中的某台主机拥有管理权限
-有一台暴露在互联网中的主机
-内部网络中的主机可以直接访问互联网
-
-
-比如
-
-
-学生于校外访问校园网资源
-远程办公
-管理家庭局域网设备
-
-举个栗子这里通过一个例子，描述如何通过一步步的操作，利用softEther VPN 套件实现远程访问。
-
-一个安全的网络（192.168.1.0/24），它受到...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/04/14</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "网络配置">网络配置</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "VPN">VPN</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "内网访问">内网访问</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href = "/2020/04/14/github%E9%85%8D%E7%BD%AEssh-key%E8%AE%BF%E9%97%AE/" >
             
                 <span>github配置ssh-key访问</span>
@@ -451,423 +385,10 @@ height:50vh;
         </div>
     </article>
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/04/14/kubeclt-%E5%A4%87%E5%BF%98%E5%8D%95/" >
-            
-                <span>kubeclt 备忘单</span>
-        </a>
-        <div class="abstract-content">
-            本页面是 kubectl 命令的概述。
-
-kubectl - 备忘单
-Kubectl 自动补全
-Kubectl 上下文和配置
-Apply
-创建对象
-获取和查找资源
-更新资源
-局部更新资源
-编辑资源
-对资源进行伸缩
-删除资源
-与运行中的 Pods 进行交互
-与节点和集群进行交互
-接下来
-
-kubectl - 备忘单Kubectl 自动补全BASH12source &lt;(kubectl completion bash) # 在 bash 中设置当前 shell 的自动补全，要先安装 bash-completion 包。echo "source &lt;(kubectl completio...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/04/14</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "kubectl">kubectl</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "命令参考">命令参考</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/04/13/maven%E8%BF%9E%E6%8E%A5nexus%E7%A7%81%E6%9C%8D%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/" >
-            
-                <span>maven连接nexus私服配置文件详解</span>
-        </a>
-        <div class="abstract-content">
-            settings.xml有什么用？
-如果在Eclipse中使用过Maven插件，想必会有这个经验：配置settings.xml文件的路径。
-settings.xml文件是干什么的，为什么要配置它呢？从settings.xml的文件名就可以看出，它是用来设置maven参数的配置文件。并且，settings.xml是maven的全局配置文件。而pom.xml文件是所在项目的局部配置。Settings.xml中包含类似本地仓储位置、修改远程仓储服务器、认证信息等配置。
-settings.xml文件位置
-settings.xml文件一般存在于两个位置：全局配置: ${M2_HOME}/conf/...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/04/13</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "配置管理">配置管理</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "nexus">nexus</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "maven">maven</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/04/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E7%89%B9%E5%BE%81/" >
-            
-                <span>机器学习如何选择特征</span>
-        </a>
-        <div class="abstract-content">
-            看到一篇好文章分享出来，看别人是如何选特征的，作者是Edwin Jarvis
-作者：Edwin Jarvis
-特征选择(排序)对于数据科学家、机器学习从业者来说非常重要。好的特征选择能够提升模型的性能，更能帮助我们理解数据的特点、底层结构，这对进一步改善模型、算法都有着重要作用。
-特征选择主要有两个功能：
-
-减少特征数量、降维，使模型泛化能力更强，减少过拟合
-增强对特征和特征值之间的理解
-
-拿到数据集，一个特征选择方法，往往很难同时完成这两个目的。通常情况下，我们经常不管三七二十一，选择一种自己最熟悉或者最方便的特征选择方法（往往目的是降维，而忽略了对特征和数据理解的目的）。
-在许多机器...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/04/11</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "特征选择">特征选择</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "网文精选">网文精选</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/04/11/%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" >
-            
-                <span>半监督学习   semi-supervisered</span>
-        </a>
-        <div class="abstract-content">
-            
-标注数据和未标注数据
-直推   内部预测
-归纳式  
-
-
-SSL
-主动学习
-机器先对未标注数据进行标注，人对机器不太确认的部分进行标注（p值），再把人标注数据放入训练集训练模型
-
-
-SSL并非都有效
-非标签数据加入可能不如加入少量标签数据；
-假设满足
-假设分布
-同分布下同类样本距离更近
-
-
-
-
-半监督趋势
-边界
-密度
-聚类
-
-
-自学习  self -learning
-生成模型和判别模型
-条件概率和联合概率
-
-
-Multi-View Learning    /    Co-Learning
-
-标签传递
-
-
-
-
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/04/11</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "半监督">半监督</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "机器学习">机器学习</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/04/11/%E9%80%9A%E7%94%A8%E6%B5%81%E7%A8%8B/" >
-            
-                <span>通用流程</span>
-        </a>
-        <div class="abstract-content">
-            机器学习业务通用流程1、数据清洗
-缺失值
-id
-常数列
-
-2、类型标准化
-数值列   int32   float32
-类别列   object
-日期列   统一格式
-输入：  
-dict({dataDf   /   evalDf})   
-dict(params)
-
-
-输出：
-Df
-
-
-
-3、数据处理-缺失值处理
-输入：
-Df1
-Map（col: method)
-
-
-输出：
-Df1
-
-
-
-4、数据探查profile
-KS检验   检验两个数据集是否同分布（分别检验多种不同分布）
-
-5、行缺失6、删除列（reference ）
-输入：
-Df1  ，Df2(reference)     
-
-...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/04/11</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/04/11/%E9%83%A8%E7%BD%B2PyPi%E7%A6%BB%E7%BA%BF%E7%A7%81%E6%9C%89%E5%BA%93/" >
-            
-                <span>部署PyPi离线私有库</span>
-        </a>
-        <div class="abstract-content">
-            1. 拉取镜像
-pypiserver/pypiserver1docker pull pypiserver&#x2F;pypiserver:latest
-2. docker 部署运行
-运行container1234567891011mkdir -p &#x2F;data&#x2F;pypi&#x2F;packages# 无认证目录上传，直接将安装包下载到映射目录即可docker  run --name pypiserver --restart&#x3D;always -d -p 8088:8080 -v &#x2F;data&#x2F;pypi&#x2F;packages:&#x2F;da...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/04/11</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "pypi">pypi</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "部署">部署</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/03/26/hello-world/" >
-            
-                <span>Hello World</span>
-        </a>
-        <div class="abstract-content">
-            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post1$ hexo new "My New Post"
-
-More info: Writing
-Run server1$ hexo server
-
-Mo...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/26</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
     <!-- paginator  -->
     
 </main>
             <!-- profile -->
-            
-            <div class="profile">
-    <img class="profile-avatar" alt="avatar" src= /avatar/Misaka.jpg >
-    <div class="profile-name">wayne's Blog</div>
-    
-    <div class="profile-signature">
-        Hello，World!
-    </div>
-    
-    
-    <div class="profile-social">
-        
-    
-        
-            
-                <a href="mailto:12345@qq.com" class="iconfont-archer email" title=email ></a>
-            
-        
-    
-        
-            
-                <a href="//github.com/coolwin8" class="iconfont-archer github" target="_blank" title=github></a>
-            
-        
-    
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                  
-                  <img class="profile-qr" src="/assets/example_qr.png" />
-                </span>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-
-    </div>
-    
-    
-        <div class="friends">
-            <div>FRIENDS</div>
-            
-                
-                    <span>
-                        <a href= //www.baidu.com target="_black">百度</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //www.google.com target="_black">谷歌</a>
-                    </span>
-                
-            
-                
-            
-        </div>
-    
-    
-        <div class="about-me">
-            <a href = "/about" >ABOUT ME</a>
-        </div>
-    
-</div>
             
         </div>
         <footer class="footer footer-unloaded">
